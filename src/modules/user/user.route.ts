@@ -1,0 +1,31 @@
+import { ROUTES } from "@/constants";
+import { Router } from "express";
+import {
+  getUserInfo,
+  updateUserAvatar,
+  updateUserInfo,
+} from "./user.controller";
+import { authMiddleware } from "@/middleware/auth.middleware";
+import { upload } from "@/utils/multer";
+import { validate } from "@/middleware/validateHandler.middleware";
+import { userSchema } from "./user.schema";
+
+const userRouter = Router();
+
+userRouter.get(ROUTES.USER, authMiddleware, getUserInfo);
+
+userRouter.patch(
+  ROUTES.AVATAR,
+  authMiddleware,
+  upload.single("file"),
+  updateUserAvatar
+);
+
+userRouter.patch(
+  ROUTES.USER,
+  authMiddleware,
+  validate(userSchema),
+  updateUserInfo
+);
+
+export default userRouter;
