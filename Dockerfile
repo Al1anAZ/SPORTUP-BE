@@ -3,6 +3,9 @@
 
     WORKDIR /app
     
+    ARG DATABASE_URL
+    ENV DATABASE_URL=$DATABASE_URL
+    
     COPY package*.json ./
     ENV HUSKY_SKIP_INSTALL=1
     RUN npm ci
