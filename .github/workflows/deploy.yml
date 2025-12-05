@@ -49,5 +49,6 @@ jobs:
 
             echo "Pulling latest images via docker-compose..."
             cd sportup-backend
+            docker-compose down
             docker-compose pull
             docker-compose up -d
