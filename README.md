@@ -37,14 +37,12 @@ A simple, clean, and scalable backend for an e-commerce platform built with **Ex
 git clone https://github.com/your-repo/ecommerce-backend.git
 cd ecommerce-backend
 
-# install dependencies
-npm install
+docker compose build
 
-# run database migrations (Prisma)
-npx prisma migrate dev
+docker compose up backend-dev
 
-# start dev server
-npm run dev
+docker compose up --build backend-prod
+
 ```
 
 Default API URL: **[http://localhost:4000](http://localhost:4000)**

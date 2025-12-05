@@ -3,22 +3,12 @@
 
     WORKDIR /app
     
-
     COPY package*.json ./
-    
-
     ENV HUSKY_SKIP_INSTALL=1
-    
-
     RUN npm ci
     
-
     COPY . .
-    
-
     RUN npx prisma generate
-    
-
     RUN npm run build
     
     # ---- Production stage ----
@@ -26,19 +16,14 @@
     
     WORKDIR /app
     
-
     COPY package*.json ./
-    
-
     ENV HUSKY_SKIP_INSTALL=1
     RUN npm ci --omit=dev --ignore-scripts
     
-
     COPY --from=builder /app/dist ./dist
     COPY --from=builder /app/prisma ./prisma
     COPY --from=builder /app/node_modules ./node_modules
     
     EXPOSE 4000
-    
     CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
     

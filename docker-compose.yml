@@ -1,7 +1,24 @@
 services:
-  backend:
-    build: .
-    container_name: sportup-back-end
+  backend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: sportup-backend-dev
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+    environment:
+      - HUSKY_SKIP_INSTALL=1
+
+  backend-prod:
+    build:
+      context: .
+      target: production
+    container_name: sportup-backend-prod
     ports:
       - "4000:4000"
     env_file:
