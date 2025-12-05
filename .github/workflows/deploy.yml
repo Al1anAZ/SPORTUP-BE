@@ -35,3 +35,18 @@ jobs:
       - name: Push image to ECR
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/sportup-backend:latest
+          - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            echo "Logging into AWS ECR on EC2..."
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+
+            echo "Pulling latest images via docker-compose..."
+            cd /path/to/your/docker-compose/directory
+            docker-compose pull
+            docker-compose up -d
