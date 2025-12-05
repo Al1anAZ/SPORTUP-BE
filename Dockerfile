@@ -8,7 +8,9 @@
     RUN npm ci
     
     COPY . .
-    RUN npx prisma generate
+    
+    RUN npx prisma generate --schema=prisma/schema.prisma
+    
     RUN npm run build
     
     # ---- Production stage ----
@@ -25,5 +27,6 @@
     COPY --from=builder /app/node_modules ./node_modules
     
     EXPOSE 4000
+    
     CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
     

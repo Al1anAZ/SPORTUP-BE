@@ -2,7 +2,7 @@ name: CI/CD to AWS ECR
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-and-push:
@@ -25,7 +25,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t sportup-backend .
+          docker build -t sportup-backend \
+            --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} .
 
       - name: Tag image
         run: |
