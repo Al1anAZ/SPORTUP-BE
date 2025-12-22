@@ -29,3 +29,71 @@ model RefreshToken {
   createdAt DateTime @default(now())
   expiresAt DateTime
 }
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  slug        String  @unique
+
+  brandId    Int
+  categoryId Int
+
+  brand    Brand    @relation(fields: [brandId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  variants ProductVariant[]
+  images   ProductImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+
+  products Product[]
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+  slug String @unique
+
+  products Product[]
+}
+
+model Size {
+  id    Int    @id @default(autoincrement())
+  value String @unique
+
+  variants ProductVariant[]
+}
+
+model ProductImage {
+  id        Int @id @default(autoincrement())
+  productId Int
+
+  url   String
+  color String?
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model ProductVariant {
+  id Int @id @default(autoincrement())
+
+  productId Int
+  sizeId    Int
+
+  color String
+  price Float
+  stock Int
+
+  product Product @relation(fields: [productId], references: [id])
+  size    Size    @relation(fields: [sizeId], references: [id])
+
+  @@unique([productId, sizeId, color])
+}
