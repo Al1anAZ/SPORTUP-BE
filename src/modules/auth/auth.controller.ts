@@ -1,10 +1,12 @@
 import { RequestHandler } from "express";
 import { authService } from "./auth.service";
 import config from "@/config";
+import { ValidatedRequest } from "@/types/validation.middleware";
+import { loginInput, registerInput } from "./auth.schema";
 
-export const register: RequestHandler = async (req, res, next) => {
+export const register: RequestHandler = async (req: ValidatedRequest<registerInput>, res, next) => {
   try {
-    const registerData = await authService.register(req.body);
+    const registerData = await authService.register(req.validatedBody);
     res.cookie("refreshToken", registerData.refreshToken, {
       httpOnly: true,
       sameSite: "lax",
@@ -19,9 +21,9 @@ export const register: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const login: RequestHandler = async (req, res, next) => {
+export const login: RequestHandler = async (req: ValidatedRequest<loginInput>, res, next) => {
   try {
-    const loginData = await authService.login(req.body);
+    const loginData = await authService.login(req.validatedBody);
     res.cookie("refreshToken", loginData.refreshToken, {
       httpOnly: true,
       sameSite: "lax",

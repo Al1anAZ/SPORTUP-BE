@@ -1,15 +1,18 @@
 import { prismaClient } from "@/lib/prisma";
-import { sanitizeUser } from "@/utils/sinitizeUser";
+import { userSelect } from "@/utils/select-query";
 import { awsService } from "../aws/aws.service";
 import { User } from "@prisma/client";
 
 export class userService {
   static async userInfo(id: number) {
-    const user = await prismaClient.user.findUniqueOrThrow({ where: { id } });
+    const user = await prismaClient.user.findUniqueOrThrow({
+      where: { id },
+      select: userSelect,
+    });
     const avatarUrl = await awsService.s3Get(user.avatarKey);
 
     return {
-      ...sanitizeUser(user),
+      ...user,
       avatarUrl,
     };
   }
@@ -36,8 +39,9 @@ export class userService {
     const updatedInfo = await prismaClient.user.update({
       where: { id },
       data: { name, email, phone, address },
+      select: userSelect,
     });
 
-    return sanitizeUser(updatedInfo);
+    return updatedInfo;
   }
 }

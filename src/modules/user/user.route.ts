@@ -24,7 +24,7 @@ userRouter.patch(
 userRouter.patch(
   ROUTES.USER,
   authMiddleware,
-  validate(userSchema),
+  validate({ body: userSchema }),
   updateUserInfo
 );
 

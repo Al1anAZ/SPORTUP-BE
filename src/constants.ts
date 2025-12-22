@@ -1,7 +1,11 @@
 export const enum ROUTES {
   USER = "/user",
   AVATAR = "/user/avatar",
-  PRODUCTS = "/products",
+  PRODUCT = "/product",
+  PRODUCT_BY_SLUG = "/product/:slug",
+  BRAND = '/product/brand',
+  CATEGORY = '/product/category',
+  SIZE = '/product/size',
   REGISTER = "/auth/register",
   LOGIN = "/auth/login",
   LOGOUT = "/auth/logout",
@@ -13,4 +17,6 @@ export const ERROR_MAP: Record<string, { status: number; msg: string }> = {
   P2002: { status: 409, msg: "Duplicate record" },
   TokenExpiredError: { status: 401, msg: "Token expired" },
   JsonWebTokenError: { status: 401, msg: "Invalid token" },
+  InvalidType: { status: 400, msg: "Invalid Type" },
+  RequiredParam: { status: 400, msg: "Empty required param" },
 };

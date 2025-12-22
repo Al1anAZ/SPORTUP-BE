@@ -3,7 +3,7 @@ import { loginInput, registerInput } from "./auth.schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "@/config";
-import { sanitizeUser } from "@/utils/sinitizeUser";
+import { sanitizeUser } from "@/utils/select-query";
 import { createError } from "@/utils/createError";
 
 export class authService {

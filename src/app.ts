@@ -1,11 +1,12 @@
 import express from "express";
-import cors from "cors"
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import { loogerHandlerMiddleware } from "./middleware/loggerHandler.middleware";
 import { errorHandlerMiddleware } from "./middleware/errorHandler.middleware";
 import authRouter from "./modules/auth/auth.route";
 import userRouter from "./modules/user/user.route";
 import config from "./config";
+import productRouter from "./modules/product/product.route";
 
 const app = express();
 
@@ -16,15 +17,16 @@ app.use(
       const isAllowed = config.CORS_ALLOW.includes(origin);
       callback(null, isAllowed);
     },
-    credentials: true, 
+    credentials: true,
   })
 );
 app.use(express.json());
 app.use(cookieParser());
 app.use(loogerHandlerMiddleware);
 
-app.use('/api/v1', authRouter);
-app.use('/api/v1', userRouter);
+app.use("/api/v1", authRouter);
+app.use("/api/v1", userRouter);
+app.use("/api/v1", productRouter);
 
 app.use(errorHandlerMiddleware);
 

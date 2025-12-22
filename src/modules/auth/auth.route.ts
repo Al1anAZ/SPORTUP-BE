@@ -7,8 +7,8 @@ import { authMiddleware } from "@/middleware/auth.middleware";
 
 const authRouter = Router();
 
-authRouter.post(ROUTES.LOGIN, validate(loginSchema), login);
-authRouter.post(ROUTES.REGISTER, validate(registerSchema), register);
+authRouter.post(ROUTES.LOGIN, validate({ body: loginSchema }), login);
+authRouter.post(ROUTES.REGISTER, validate({ body: registerSchema }), register);
 authRouter.post(ROUTES.REFRESH_TOKEN, refreshToken);
 authRouter.post(ROUTES.LOGOUT, authMiddleware, logout);
 

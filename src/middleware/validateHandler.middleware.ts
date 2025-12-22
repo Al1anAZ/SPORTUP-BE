@@ -1,11 +1,26 @@
-import { NextFunction, Request } from "express";
-import z from "zod";
+import { Schemas, ValidatedRequest } from "@/types/validation.middleware";
+import { RequestHandler } from "express";
 
 export const validate =
-  <T>(schema: z.ZodType<T>) =>
-  (req: Request<{}, any, T>, _, next: NextFunction) => {
+  <TBody = any, TQuery = any, TParams = any>(
+    schemas: Schemas<TBody, TQuery, TParams>
+  ): RequestHandler =>
+  (req, _, next) => {
     try {
-      req.body = schema.parse(req.body);
+      const r = req as ValidatedRequest<TBody, TQuery, TParams>;
+
+      if (schemas.body) {
+        r.validatedBody = schemas.body.parse(req.body);
+      }
+
+      if (schemas.query) {
+        r.validatedQuery = schemas.query.parse(req.query);
+      }
+
+      if (schemas.params) {
+        r.validatedParams = schemas.params.parse(req.params);
+      }
+
       next();
     } catch (error) {
       next(error);
