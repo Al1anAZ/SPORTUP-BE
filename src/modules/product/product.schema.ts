@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ProductTag } from "@prisma/client";
 
 export const productPaginationAndFilterSchema = z.object({
   page: z
@@ -62,6 +63,10 @@ export const productPaginationAndFilterSchema = z.object({
     .refine((val) => val === undefined || val >= 0, {
       message: "maxPrice must be >= 0",
     }),
+    
+  tag: z.enum(ProductTag).optional()
 });
 
-export type productPaginationAndFilterInput = z.infer<typeof productPaginationAndFilterSchema>;
+export type productPaginationAndFilterInput = z.infer<
+  typeof productPaginationAndFilterSchema
+>;

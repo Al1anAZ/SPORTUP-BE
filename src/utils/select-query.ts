@@ -4,7 +4,7 @@ export const productBySlugSelect = {
   id: true,
   name: true,
   slug: true,
-  tags: true,
+  tag: true,
   description: true,
 
   brand: {

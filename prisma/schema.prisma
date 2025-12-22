@@ -49,7 +49,7 @@ model Product {
   brand    Brand    @relation(fields: [brandId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
 
-  tags     ProductTag
+  tag     ProductTag
   variants ProductVariant[]
   images   ProductImage[]
 

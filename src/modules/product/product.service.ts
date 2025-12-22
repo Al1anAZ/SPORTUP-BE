@@ -1,10 +1,15 @@
 import { prismaClient } from "@/lib/prisma";
-import { productBySlugSelect, productWithPaginationAndFilter } from "@/utils/select-query";
+import {
+  productBySlugSelect,
+  productWithPaginationAndFilter,
+} from "@/utils/select-query";
 import { Prisma } from "@prisma/client";
 import { productPaginationAndFilterInput } from "./product.schema";
 
 export class productService {
-  static async productsWithFiltersAndPagination(options: productPaginationAndFilterInput) {
+  static async productsWithFiltersAndPagination(
+    options: productPaginationAndFilterInput
+  ) {
     const {
       page = 1,
       limit = 20,
@@ -14,10 +19,11 @@ export class productService {
       brandSlug,
       size,
       color,
+      tag,
       minPrice,
       maxPrice,
     } = options;
-  
+
     const variantFilter: Prisma.ProductVariantWhereInput = {
       stock: { gt: 0 },
       ...(size?.length ? { size: { value: { in: size } } } : {}),
@@ -26,13 +32,18 @@ export class productService {
         ? { price: { gte: minPrice ?? 0, lte: maxPrice ?? Number.MAX_VALUE } }
         : {}),
     };
-  
+
     const where: Prisma.ProductWhereInput = {
-      ...(categorySlug?.length ? { category: { slug: { in: categorySlug } } } : {}),
+      ...(categorySlug?.length
+        ? { category: { slug: { in: categorySlug } } }
+        : {}),
       ...(brandSlug?.length ? { brand: { slug: { in: brandSlug } } } : {}),
-      ...(Object.keys(variantFilter).length ? { variants: { some: variantFilter } } : {}),
+      ...(Object.keys(variantFilter).length
+        ? { variants: { some: variantFilter } }
+        : {}),
+      ...(tag ? { tag: tag } : {}),
     };
-  
+
     return prismaClient.product.findMany({
       where,
       select: productWithPaginationAndFilter,
@@ -41,7 +52,6 @@ export class productService {
       take: limit,
     });
   }
-  
 
   static async productSlug(slug: string) {
     const product = await prismaClient.product.findUniqueOrThrow({
@@ -62,7 +72,11 @@ export class productService {
       },
     });
 
-    return categories;
+    return categories.map((c) => ({
+      name: c.name,
+      slug: c.slug,
+      count: c._count,
+    }));
   }
 
   static async productBrands() {
@@ -75,7 +89,11 @@ export class productService {
       },
     });
 
-    return brands;
+    return brands.map((b) => ({
+      name: b.name,
+      slug: b.slug,
+      count: b._count,
+    }));
   }
 
   static async productSizes() {
@@ -94,12 +112,21 @@ export class productService {
       },
     });
 
-    return sizes;
+    return sizes.map((s) => ({
+      name: s.value,
+      count: s._count,
+    }));
   }
 
-  //add get color
+  static async productColors() {
+    const colors = await prismaClient.productVariant.groupBy({
+      by: ["color"],
+      _count: { color: true },
+    });
 
-  // static async productColors(){
-  //   const colors = await prismaClient.
-  // }
+    return colors.map((c) => ({
+      name: c.color,
+      count: c._count.color,
+    }));
+  }
 }

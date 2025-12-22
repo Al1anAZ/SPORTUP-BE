@@ -7,18 +7,18 @@ export const validate =
   ): RequestHandler =>
   (req, _, next) => {
     try {
-      const r = req as ValidatedRequest<TBody, TQuery, TParams>;
+      const validateReq = req as ValidatedRequest<TBody, TQuery, TParams>;
 
       if (schemas.body) {
-        r.validatedBody = schemas.body.parse(req.body);
+        validateReq.validatedBody = schemas.body.parse(req.body);
       }
 
       if (schemas.query) {
-        r.validatedQuery = schemas.query.parse(req.query);
+        validateReq.validatedQuery = schemas.query.parse(req.query);
       }
 
       if (schemas.params) {
-        r.validatedParams = schemas.params.parse(req.params);
+        validateReq.validatedParams = schemas.params.parse(req.params);
       }
 
       next();
