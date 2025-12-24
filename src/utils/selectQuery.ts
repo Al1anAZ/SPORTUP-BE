@@ -21,19 +21,17 @@ export const productBySlugSelect = {
     },
   },
 
-  images: {
-    select: {
-      url: true,
-      color: true,
-    },
-  },
-
   variants: {
     select: {
       id: true,
       color: true,
       price: true,
       stock: true,
+      images: {
+        select: {
+          url: true,
+        },
+      },
       size: {
         select: {
           value: true,
@@ -62,15 +60,13 @@ export const productWithPaginationAndFilter = {
       slug: true,
     },
   },
-
-  images: {
-    select: {
-      url: true,
-      color: true,
-    },
-  },
   variants: {
     select: {
+      images: {
+        select: {
+          url: true,
+        },
+      },
       color: true,
       price: true,
       stock: true,

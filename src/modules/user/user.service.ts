@@ -1,5 +1,5 @@
 import { prismaClient } from "@/lib/prisma";
-import { userSelect } from "@/utils/select-query";
+import { userSelect } from "@/utils/selectQuery";
 import { awsService } from "../aws/aws.service";
 import { User } from "@prisma/client";
 

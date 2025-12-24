@@ -19,11 +19,8 @@ export const productPaginationAndFilterSchema = z.object({
     }),
 
   sortBy: z
-    .string()
+    .enum(["createdAt", "price", "priceMax", "name"])
     .optional()
-    .refine((val) => ["createdAt", "price", "name"].includes(val || ""), {
-      message: "Invalid sortBy value",
-    })
     .default("createdAt"),
 
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),

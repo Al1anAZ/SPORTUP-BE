@@ -21,5 +21,6 @@ productRouter.get(ROUTES.PRODUCT_BY_SLUG, getProductBySlug);
 productRouter.get(ROUTES.CATEGORY, getProductCategories);
 productRouter.get(ROUTES.BRAND, getProductBrands);
 productRouter.get(ROUTES.SIZE, getProductSizes);
+productRouter.get(ROUTES.COLOR, getProductSizes);
 
 export default productRouter;

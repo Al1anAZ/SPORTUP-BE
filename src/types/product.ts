@@ -1,4 +1,4 @@
-import { productBySlugSelect } from "@/utils/select-query";
+import { productBySlugSelect } from "@/utils/selectQuery";
 import { Prisma } from "@prisma/client";
 
 export type ProductWithVariants = Prisma.ProductGetPayload<{

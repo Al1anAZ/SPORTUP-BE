@@ -2,9 +2,10 @@ import { prismaClient } from "@/lib/prisma";
 import {
   productBySlugSelect,
   productWithPaginationAndFilter,
-} from "@/utils/select-query";
+} from "@/utils/selectQuery";
 import { Prisma } from "@prisma/client";
 import { productPaginationAndFilterInput } from "./product.schema";
+import { normalizeAggregation } from "@/utils/normalizeAgregation";
 
 export class productService {
   static async productsWithFiltersAndPagination(
@@ -24,30 +25,55 @@ export class productService {
       maxPrice,
     } = options;
 
-    const variantFilter: Prisma.ProductVariantWhereInput = {
-      stock: { gt: 0 },
-      ...(size?.length ? { size: { value: { in: size } } } : {}),
-      ...(color?.length ? { color: { in: color } } : {}),
-      ...(minPrice !== undefined || maxPrice !== undefined
-        ? { price: { gte: minPrice ?? 0, lte: maxPrice ?? Number.MAX_VALUE } }
-        : {}),
-    };
+    const variantWhere: Prisma.ProductVariantWhereInput = {};
+
+    if (size?.length) {
+      variantWhere.size = { value: { in: size } };
+    }
+
+    if (color?.length) {
+      variantWhere.color = { in: color };
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      variantWhere.price = {
+        gte: minPrice ?? 0,
+        lte: maxPrice ?? Number.MAX_VALUE,
+      };
+    }
 
     const where: Prisma.ProductWhereInput = {
-      ...(categorySlug?.length
-        ? { category: { slug: { in: categorySlug } } }
-        : {}),
-      ...(brandSlug?.length ? { brand: { slug: { in: brandSlug } } } : {}),
-      ...(Object.keys(variantFilter).length
-        ? { variants: { some: variantFilter } }
-        : {}),
-      ...(tag ? { tag: tag } : {}),
+      ...(categorySlug?.length && {
+        category: { slug: { in: categorySlug } },
+      }),
+      ...(brandSlug?.length && {
+        brand: { slug: { in: brandSlug } },
+      }),
+      ...(Object.keys(variantWhere).length && {
+        variants: {
+          some: {
+            stock: { gt: 0 },
+            ...variantWhere,
+          },
+        },
+      }),
+      ...(tag && { tag }),
+    };
+
+    const orderByMap: Record<
+      productPaginationAndFilterInput["sortBy"],
+      Prisma.ProductOrderByWithRelationInput
+    > = {
+      createdAt: { createdAt: sortOrder },
+      name: { name: sortOrder },
+      price: { minPrice: sortOrder },
+      priceMax: { maxPrice: sortOrder },
     };
 
     return prismaClient.product.findMany({
       where,
       select: productWithPaginationAndFilter,
-      orderBy: { [sortBy]: sortOrder },
+      orderBy: orderByMap[sortBy],
       skip: (page - 1) * limit,
       take: limit,
     });
@@ -67,16 +93,26 @@ export class productService {
       select: {
         ...productBySlugSelect.category.select,
         _count: {
-          select: { products: true },
+          select: {
+            products: {
+              where: {
+                variants: {
+                  some: {
+                    stock: { gt: 0 },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     });
 
-    return categories.map((c) => ({
-      name: c.name,
-      slug: c.slug,
-      count: c._count,
-    }));
+    return normalizeAggregation(categories, {
+      name: (c) => c.name,
+      slug: (c) => c.slug,
+      count: (c) => c._count.products,
+    });
   }
 
   static async productBrands() {
@@ -84,16 +120,26 @@ export class productService {
       select: {
         ...productBySlugSelect.brand.select,
         _count: {
-          select: { products: true },
+          select: {
+            products: {
+              where: {
+                variants: {
+                  some: {
+                    stock: { gt: 0 },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     });
 
-    return brands.map((b) => ({
-      name: b.name,
-      slug: b.slug,
-      count: b._count,
-    }));
+    return normalizeAggregation(brands, {
+      name: (b) => b.name,
+      slug: (b) => b.slug,
+      count: (b) => b._count.products,
+    });
   }
 
   static async productSizes() {
@@ -112,21 +158,24 @@ export class productService {
       },
     });
 
-    return sizes.map((s) => ({
-      name: s.value,
-      count: s._count,
-    }));
+    return normalizeAggregation(sizes, {
+      name: (s) => s.value,
+      count: (s) => s._count.variants,
+    });
   }
 
   static async productColors() {
     const colors = await prismaClient.productVariant.groupBy({
       by: ["color"],
+      where: {
+        stock: { gt: 0 },
+      },
       _count: { color: true },
     });
 
-    return colors.map((c) => ({
-      name: c.color,
-      count: c._count.color,
-    }));
+    return normalizeAggregation(colors, {
+      name: (c) => c.color,
+      count: (c) => c._count.color,
+    });
   }
 }

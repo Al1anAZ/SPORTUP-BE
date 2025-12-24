@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { productService } from "./product.service";
 import { createError } from "@/utils/createError";
-import { resolveSelectedVariant } from "@/utils/product-variant-resolver";
+import { resolveSelectedVariant } from "@/utils/productVariantResolver";
 import { productPaginationAndFilterInput } from "./product.schema";
 import { ValidatedRequest } from "@/types/validation.middleware";
 
@@ -67,6 +67,15 @@ export const getProductSizes: RequestHandler = async (_, res, next) => {
   try {
     const sizes = await productService.productSizes();
     res.json(sizes);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProductColors: RequestHandler = async (_, res, next) => {
+  try {
+    const colors = await productService.productColors();
+    res.json(colors);
   } catch (error) {
     next(error);
   }
