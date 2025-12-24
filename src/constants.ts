@@ -7,6 +7,7 @@ export const enum ROUTES {
   CATEGORY = "/product/category",
   SIZE = "/product/size",
   COLOR = "/product/color",
+  TAG = "/product/tag",
   REGISTER = "/auth/register",
   LOGIN = "/auth/login",
   LOGOUT = "/auth/logout",

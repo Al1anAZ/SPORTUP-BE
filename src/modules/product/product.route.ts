@@ -4,8 +4,10 @@ import {
   getProductBrands,
   getProductBySlug,
   getProductCategories,
+  getProductColors,
   getProducts,
   getProductSizes,
+  getProductTags,
 } from "./product.controller";
 import { validate } from "@/middleware/validateHandler.middleware";
 import { productPaginationAndFilterSchema } from "./product.schema";
@@ -21,6 +23,7 @@ productRouter.get(ROUTES.PRODUCT_BY_SLUG, getProductBySlug);
 productRouter.get(ROUTES.CATEGORY, getProductCategories);
 productRouter.get(ROUTES.BRAND, getProductBrands);
 productRouter.get(ROUTES.SIZE, getProductSizes);
-productRouter.get(ROUTES.COLOR, getProductSizes);
+productRouter.get(ROUTES.COLOR, getProductColors);
+productRouter.get(ROUTES.TAG, getProductTags);
 
 export default productRouter;

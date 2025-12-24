@@ -80,3 +80,12 @@ export const getProductColors: RequestHandler = async (_, res, next) => {
     next(error);
   }
 };
+
+export const getProductTags: RequestHandler = async (_, res, next) => {
+  try {
+    const tags = await productService.productTags();
+    res.json(tags);
+  } catch (error) {
+    next(error);
+  }
+};

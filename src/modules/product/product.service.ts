@@ -178,4 +178,24 @@ export class productService {
       count: (c) => c._count.color,
     });
   }
+  static async productTags() {
+    const tags = await prismaClient.product.groupBy({
+      by: ["tag"],
+      where: {
+        variants: {
+          some: {
+            stock: { gt: 0 },
+          },
+        },
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    return normalizeAggregation(tags, {
+      name: (t) => t.tag,
+      count: (t) => t._count._all
+    })
+  }
 }
