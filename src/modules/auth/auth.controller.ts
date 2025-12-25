@@ -4,7 +4,11 @@ import config from "@/config";
 import { ValidatedRequest } from "@/types/validation.middleware";
 import { loginInput, registerInput } from "./auth.schema";
 
-export const register: RequestHandler = async (req: ValidatedRequest<registerInput>, res, next) => {
+export const register: RequestHandler = async (
+  req: ValidatedRequest<registerInput>,
+  res,
+  next
+) => {
   try {
     const registerData = await authService.register(req.validatedBody);
     res.cookie("refreshToken", registerData.refreshToken, {
@@ -21,7 +25,11 @@ export const register: RequestHandler = async (req: ValidatedRequest<registerInp
   }
 };
 
-export const login: RequestHandler = async (req: ValidatedRequest<loginInput>, res, next) => {
+export const login: RequestHandler = async (
+  req: ValidatedRequest<loginInput>,
+  res,
+  next
+) => {
   try {
     const loginData = await authService.login(req.validatedBody);
     res.cookie("refreshToken", loginData.refreshToken, {
@@ -44,7 +52,11 @@ export const refreshToken: RequestHandler = async (req, res, next) => {
     const payload = authService.verifyRefreshToken(refreshToken);
 
     const { refreshToken: newRefreshToken, accessToken } =
-      await authService.rotateRefreshToken(payload.userId, refreshToken);
+      await authService.rotateRefreshToken(
+        payload.userId,
+        payload.role,
+        refreshToken
+      );
 
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,

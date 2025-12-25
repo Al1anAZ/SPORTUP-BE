@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "@/config";
 import { createError } from "@/utils/createError";
-import { sanitizeUser } from "@/utils/sanitizeUser";
+import { User } from "@prisma/client";
 
 export class authService {
   static async login({ email, password }: loginInput) {
@@ -15,11 +15,11 @@ export class authService {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new Error("Invalid credentials");
 
-    const tokens = this.generateTokens(user.id);
+    const tokens = this.generateTokens(user.id, user.role);
 
     await this.saveRefreshToken(user.id, tokens.refreshToken);
 
-    return { ...sanitizeUser(user), ...tokens };
+    return { ...tokens };
   }
 
   static async register(registerData: registerInput) {
@@ -30,18 +30,18 @@ export class authService {
     const user = await prismaClient.user.create({
       data: { ...registerData, password: hashedPassword },
     });
-    const tokens = this.generateTokens(user.id);
+    const tokens = this.generateTokens(user.id, user.role);
 
     await this.saveRefreshToken(user.id, tokens.refreshToken);
 
-    return { ...sanitizeUser(user), ...tokens };
+    return { ...tokens };
   }
 
-  static generateTokens(userId: number) {
-    const accessToken = jwt.sign({ userId }, config.JWT_SECRET, {
+  static generateTokens(userId: number, role: User["role"]) {
+    const accessToken = jwt.sign({ userId, role }, config.JWT_SECRET, {
       expiresIn: config.ACCESS_TOKEN_EXPIRE,
     });
-    const refreshToken = jwt.sign({ userId }, config.JWT_REFRESH_SECRET, {
+    const refreshToken = jwt.sign({ userId, role }, config.JWT_REFRESH_SECRET, {
       expiresIn: config.REFRESH_TOKEN_EXPIRES,
     });
     return { accessToken, refreshToken };
@@ -74,11 +74,11 @@ export class authService {
     throw createError("P2025", "Refresh token not found");
   }
 
-  static async rotateRefreshToken(userId: number, refreshToken: string) {
+  static async rotateRefreshToken(userId: number, role: User["role"], refreshToken: string) {
     await this.validateRefreshToken(refreshToken, userId);
     await this.removeRefreshToken(refreshToken, userId);
 
-    const tokens = this.generateTokens(userId);
+    const tokens = this.generateTokens(userId, role);
 
     await this.saveRefreshToken(userId, tokens.refreshToken);
 
@@ -86,11 +86,11 @@ export class authService {
   }
 
   static verifyAccessToken(token: string) {
-    return jwt.verify(token, config.JWT_SECRET) as { userId: number };
+    return jwt.verify(token, config.JWT_SECRET) as { userId: number, role: User["role"] };
   }
 
   static verifyRefreshToken(token: string) {
-    return jwt.verify(token, config.JWT_REFRESH_SECRET) as { userId: number };
+    return jwt.verify(token, config.JWT_REFRESH_SECRET) as { userId: number, role: User["role"] };
   }
 
   static async validateRefreshToken(refreshToken: string, userId: number) {

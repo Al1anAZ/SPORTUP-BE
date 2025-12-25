@@ -47,6 +47,7 @@ export const userSelect = {
   avatarKey: true,
   address: true,
   phone: true,
+  role: true
 } satisfies Prisma.UserSelect;
 
 export const productWithPaginationAndFilter = {

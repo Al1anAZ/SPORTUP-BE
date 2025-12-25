@@ -19,7 +19,7 @@ export const productPaginationAndFilterSchema = z.object({
     }),
 
   sortBy: z
-    .enum(["createdAt", "price", "priceMax", "name"])
+    .enum(["createdAt", "price", "priceMax"])
     .optional()
     .default("createdAt"),
 

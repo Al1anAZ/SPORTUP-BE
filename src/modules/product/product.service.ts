@@ -65,7 +65,6 @@ export class productService {
       Prisma.ProductOrderByWithRelationInput
     > = {
       createdAt: { createdAt: sortOrder },
-      name: { name: sortOrder },
       price: { minPrice: sortOrder },
       priceMax: { maxPrice: sortOrder },
     };
