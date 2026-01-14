@@ -1,17 +1,17 @@
-type AggregatedItem = {
+type ProductFilterOptionItem = {
   name: string;
   slug?: string;
   count: number;
 };
 
-export const normalizeAggregation = <T>(
+export const toProductFilterOptions = <T>(
   items: T[],
   options: {
     name: (item: T) => string;
     count: (item: T) => number;
     slug?: (item: T) => string;
   }
-): AggregatedItem[] => {
+): ProductFilterOptionItem[] => {
   return items
     .map((item) => ({
       name: options.name(item),

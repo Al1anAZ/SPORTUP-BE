@@ -1,5 +1,5 @@
 import { productFilteringOptionsDTO } from "./product.schema";
-import { normalizeAggregation } from "@/utils/normalizeAgregation";
+import { toProductFilterOptions } from "@/utils/toProductFilterOptions";
 import { ProductRepository } from "./product.repository";
 
 export class ProductService {
@@ -19,7 +19,7 @@ export class ProductService {
   static async getProductCategories() {
     const categories = await ProductRepository.productCategories();
 
-    return normalizeAggregation(categories, {
+    return toProductFilterOptions(categories, {
       name: (c) => c.name,
       slug: (c) => c.slug,
       count: (c) => c._count.products,
@@ -29,7 +29,7 @@ export class ProductService {
   static async getProductBrands() {
     const brands = await ProductRepository.productBrands();
 
-    return normalizeAggregation(brands, {
+    return toProductFilterOptions(brands, {
       name: (b) => b.name,
       slug: (b) => b.slug,
       count: (b) => b._count.products,
@@ -39,7 +39,7 @@ export class ProductService {
   static async getProductSizes() {
     const sizes = await ProductRepository.productSizes();
 
-    return normalizeAggregation(sizes, {
+    return toProductFilterOptions(sizes, {
       name: (s) => s.value,
       count: (s) => s._count.variants,
     });
@@ -48,7 +48,7 @@ export class ProductService {
   static async getProductColors() {
     const colors = await ProductRepository.productColors();
 
-    return normalizeAggregation(colors, {
+    return toProductFilterOptions(colors, {
       name: (c) => c.color,
       count: (c) => c._count.color,
     });
@@ -56,7 +56,7 @@ export class ProductService {
   static async getProductTags() {
     const tags = await ProductRepository.productTags();
 
-    return normalizeAggregation(tags, {
+    return toProductFilterOptions(tags, {
       name: (t) => t.tag,
       count: (t) => t._count._all,
     });

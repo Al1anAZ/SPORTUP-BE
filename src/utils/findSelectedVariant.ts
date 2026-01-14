@@ -1,6 +1,6 @@
 import { ProductVariant } from "@/types/product";
 
-export const resolveSelectedVariant = (
+export const findSelectedVariant = (
   variants: ProductVariant[],
   variantId?: number
 ) => {

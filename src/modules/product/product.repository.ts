@@ -5,6 +5,7 @@ import {
 } from "@/utils/selectDBQuery";
 import { productFilteringOptionsDTO } from "./product.schema";
 import { Prisma } from "@prisma/client";
+import { PAGINATION_OPTIONS } from "@/constants";
 
 export class ProductRepository {
   static async bySlug(slug: string) {
@@ -16,8 +17,8 @@ export class ProductRepository {
 
   static async findAll(options?: productFilteringOptionsDTO) {
     const {
-      page = 1,
-      limit = 20,
+      page = PAGINATION_OPTIONS.BASE_PAGE,
+      limit = PAGINATION_OPTIONS.BASE_LIMIT,
       sortBy = "createdAt",
       sortOrder = "desc",
       categorySlug,

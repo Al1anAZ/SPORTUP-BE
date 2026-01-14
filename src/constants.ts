@@ -21,4 +21,9 @@ export const ERROR_MAP: Record<string, { status: number; msg: string }> = {
   JsonWebTokenError: { status: 401, msg: "Invalid token" },
   InvalidType: { status: 400, msg: "Invalid Type" },
   RequiredParam: { status: 400, msg: "Empty required param" },
-};
+} as const;
+
+export enum PAGINATION_OPTIONS {
+  BASE_PAGE = 1,
+  BASE_LIMIT = 20,
+}

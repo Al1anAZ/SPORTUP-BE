@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { ProductService } from "./product.service";
 import { createError } from "@/utils/createError";
-import { resolveSelectedVariant } from "@/utils/productVariantResolver";
+import { findSelectedVariant } from "@/utils/findSelectedVariant";
 import { productFilteringOptionsDTO } from "./product.schema";
 import { ValidatedRequest } from "@/types/validation.middleware";
 
@@ -31,7 +31,7 @@ export const getProductBySlug: RequestHandler = async (req, res, next) => {
 
     const product = await ProductService.getProductBySlug(slug);
 
-    const selectedVariant = resolveSelectedVariant(
+    const selectedVariant = findSelectedVariant(
       product.variants,
       Number(variantId)
     );
