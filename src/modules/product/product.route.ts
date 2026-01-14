@@ -10,13 +10,14 @@ import {
   getProductTags,
 } from "./product.controller";
 import { validate } from "@/middleware/validateHandler.middleware";
-import { productPaginationAndFilterSchema } from "./product.schema";
+import { productFilteringOptionsSchema } from "./product.schema";
+
 
 const productRouter = Router();
 
 productRouter.get(
   ROUTES.PRODUCT,
-  validate({ query: productPaginationAndFilterSchema }),
+  validate({ query: productFilteringOptionsSchema }),
   getProducts
 );
 productRouter.get(ROUTES.PRODUCT_BY_SLUG, getProductBySlug);

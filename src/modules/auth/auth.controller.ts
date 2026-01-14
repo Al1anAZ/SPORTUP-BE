@@ -1,24 +1,25 @@
 import { RequestHandler } from "express";
-import { authService } from "./auth.service";
+import { AuthService } from "./auth.service";
 import config from "@/config";
 import { ValidatedRequest } from "@/types/validation.middleware";
-import { loginInput, registerInput } from "./auth.schema";
+import { loginDTO, registerDTO } from "./auth.schema";
+import { TokenService } from "./token.service";
 
 export const register: RequestHandler = async (
-  req: ValidatedRequest<registerInput>,
+  req: ValidatedRequest<registerDTO>,
   res,
   next
 ) => {
   try {
-    const registerData = await authService.register(req.validatedBody);
-    res.cookie("refreshToken", registerData.refreshToken, {
+    const tokens = await AuthService.register(req.validatedBody);
+    res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
       maxAge: config.REFRESH_TOKEN_EXPIRES * 1000,
     });
     res.json({
-      accessToken: registerData.accessToken,
+      accessToken: tokens.accessToken,
     });
   } catch (error) {
     next(error);
@@ -26,20 +27,20 @@ export const register: RequestHandler = async (
 };
 
 export const login: RequestHandler = async (
-  req: ValidatedRequest<loginInput>,
+  req: ValidatedRequest<loginDTO>,
   res,
   next
 ) => {
   try {
-    const loginData = await authService.login(req.validatedBody);
-    res.cookie("refreshToken", loginData.refreshToken, {
+    const tokens = await AuthService.login(req.validatedBody);
+    res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
       maxAge: config.REFRESH_TOKEN_EXPIRES * 1000,
     });
     res.json({
-      accessToken: loginData.accessToken,
+      accessToken: tokens.accessToken,
     });
   } catch (error) {
     next(error);
@@ -49,10 +50,10 @@ export const login: RequestHandler = async (
 export const refreshToken: RequestHandler = async (req, res, next) => {
   try {
     const { refreshToken } = req.cookies;
-    const payload = authService.verifyRefreshToken(refreshToken);
+    const payload = TokenService.verifyRefreshToken(refreshToken);
 
     const { refreshToken: newRefreshToken, accessToken } =
-      await authService.rotateRefreshToken(
+      await AuthService.rotateRefreshToken(
         payload.userId,
         payload.role,
         refreshToken
@@ -74,8 +75,8 @@ export const refreshToken: RequestHandler = async (req, res, next) => {
 export const logout: RequestHandler = async (req, res, next) => {
   try {
     const { refreshToken } = req.cookies;
-    const payload = authService.verifyRefreshToken(refreshToken);
-    await authService.removeRefreshToken(refreshToken, payload.userId);
+    const payload = TokenService.verifyRefreshToken(refreshToken);
+    await AuthService.logout(payload.userId);
 
     res.clearCookie("refreshToken", {
       httpOnly: true,

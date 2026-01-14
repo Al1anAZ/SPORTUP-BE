@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import { authService } from "@/modules/auth/auth.service";
+import { TokenService } from "@/modules/auth/token.service";
 
-export const authMiddleware: RequestHandler = (req, res, next) => {
+export const authMiddleware: RequestHandler = (req, _, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -13,7 +13,7 @@ export const authMiddleware: RequestHandler = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const payload = authService.verifyAccessToken(token);
+    const payload = TokenService.verifyAccessToken(token);
     req.userId = payload.userId;
     next();
   } catch (err: any) {

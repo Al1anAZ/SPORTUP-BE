@@ -1,8 +1,6 @@
-import { productBySlugSelect } from "@/utils/selectQuery";
+import { productReducedSelectDBQuery } from "@/utils/selectDBQuery";
 import { Prisma } from "@prisma/client";
 
-export type ProductWithVariants = Prisma.ProductGetPayload<{
-  select: typeof productBySlugSelect;
-}>;
-
-export type ProductVariantDTO = ProductWithVariants["variants"][number];
+export type ProductVariant = Prisma.ProductGetPayload<{
+  select: typeof productReducedSelectDBQuery;
+}>["variants"][number];

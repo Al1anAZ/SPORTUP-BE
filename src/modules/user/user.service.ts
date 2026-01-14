@@ -1,15 +1,15 @@
 import { prismaClient } from "@/lib/prisma";
-import { userSelect } from "@/utils/selectQuery";
-import { awsService } from "../aws/aws.service";
+import { userSelectDBQuery } from "@/utils/selectDBQuery";
+import { AwsService } from "../aws/aws.service";
 import { User } from "@prisma/client";
 
-export class userService {
-  static async userInfo(id: number) {
+export class UserService {
+  static async getUserProfile(id: number) {
     const user = await prismaClient.user.findUniqueOrThrow({
       where: { id },
-      select: userSelect,
+      select: userSelectDBQuery,
     });
-    const avatarUrl = await awsService.s3Get(user.avatarKey);
+    const avatarUrl = await AwsService.s3Get(user.avatarKey);
 
     return {
       ...user,
@@ -20,7 +20,7 @@ export class userService {
   static async uploadAvatar(id: number, file: Express.Multer.File) {
     const key = `avatars/${id}-${Date.now()}.jpg`;
 
-    const { key: s3Key } = await awsService.s3Upload(
+    const { key: s3Key } = await AwsService.s3Upload(
       file.buffer,
       key,
       file.mimetype
@@ -31,15 +31,18 @@ export class userService {
       data: { avatarKey: s3Key },
     });
 
-    const newAvatar = await awsService.s3Get(s3Key);
+    const newAvatar = await AwsService.s3Get(s3Key);
     return newAvatar;
   }
 
-  static async updateInfo(id: number, { name, email, phone, address }: User) {
+  static async updateUserProfile(
+    id: number,
+    { name, email, phone, address }: User
+  ) {
     const updatedInfo = await prismaClient.user.update({
       where: { id },
       data: { name, email, phone, address },
-      select: userSelect,
+      select: userSelectDBQuery,
     });
 
     return updatedInfo;

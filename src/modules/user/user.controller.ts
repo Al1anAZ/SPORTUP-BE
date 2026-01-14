@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
-import { userService } from "./user.service";
+import { UserService } from "./user.service";
 import { fileTypeFromBuffer } from "file-type";
 import { createError } from "@/utils/createError";
 import { ValidatedRequest } from "@/types/validation.middleware";
 import { User } from "@prisma/client";
 
-export const getUserInfo: RequestHandler = async (req, res, next) => {
+export const getUserProfile: RequestHandler = async (req, res, next) => {
   try {
-    const user = await userService.userInfo(req.userId);
-    res.json(user);
+    const userProfile = await UserService.getUserProfile(req.userId);
+    return res.json(userProfile);
   } catch (error) {
     next(error);
   }
@@ -22,7 +22,7 @@ export const updateUserAvatar: RequestHandler = async (req, res, next) => {
       throw createError("InvalidType", "Invalid File Type");
     }
 
-    const avatarUrl = await userService.uploadAvatar(req.userId, req.file);
+    const avatarUrl = await UserService.uploadAvatar(req.userId, req.file);
 
     return res.json({ avatarUrl });
   } catch (error) {
@@ -30,18 +30,18 @@ export const updateUserAvatar: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const updateUserInfo: RequestHandler = async (
+export const updateUserProfile: RequestHandler = async (
   req: ValidatedRequest<User>,
   res,
   next
 ) => {
   try {
-    const updatedUser = await userService.updateInfo(
+    const updatedProfile = await UserService.updateUserProfile(
       req.userId,
       req.validatedBody
     );
 
-    return res.json(updatedUser);
+    return res.json(updatedProfile);
   } catch (error) {
     next(error);
   }

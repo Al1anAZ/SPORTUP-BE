@@ -1,7 +1,7 @@
-import { ProductVariantDTO } from "@/types/product";
+import { ProductVariant } from "@/types/product";
 
 export const resolveSelectedVariant = (
-  variants: ProductVariantDTO[],
+  variants: ProductVariant[],
   variantId?: number
 ) => {
   if (variantId) {

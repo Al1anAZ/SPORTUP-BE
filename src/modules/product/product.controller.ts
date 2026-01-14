@@ -1,17 +1,17 @@
 import { RequestHandler } from "express";
-import { productService } from "./product.service";
+import { ProductService } from "./product.service";
 import { createError } from "@/utils/createError";
 import { resolveSelectedVariant } from "@/utils/productVariantResolver";
-import { productPaginationAndFilterInput } from "./product.schema";
+import { productFilteringOptionsDTO } from "./product.schema";
 import { ValidatedRequest } from "@/types/validation.middleware";
 
 export const getProducts: RequestHandler = async (
-  req: ValidatedRequest<undefined, productPaginationAndFilterInput>,
+  req: ValidatedRequest<undefined, productFilteringOptionsDTO>,
   res,
   next
 ) => {
   try {
-    const products = await productService.productsWithFiltersAndPagination(
+    const products = await ProductService.getProductsWithFiltersAndPagination(
       req.validatedQuery
     );
     res.json(products);
@@ -29,7 +29,7 @@ export const getProductBySlug: RequestHandler = async (req, res, next) => {
       throw createError("RequiredParam", "Slug is required");
     }
 
-    const product = await productService.productSlug(slug);
+    const product = await ProductService.getProductBySlug(slug);
 
     const selectedVariant = resolveSelectedVariant(
       product.variants,
@@ -47,7 +47,7 @@ export const getProductBySlug: RequestHandler = async (req, res, next) => {
 
 export const getProductCategories: RequestHandler = async (_, res, next) => {
   try {
-    const categories = await productService.productCategories();
+    const categories = await ProductService.getProductCategories();
     res.json(categories);
   } catch (error) {
     next(error);
@@ -56,7 +56,7 @@ export const getProductCategories: RequestHandler = async (_, res, next) => {
 
 export const getProductBrands: RequestHandler = async (_, res, next) => {
   try {
-    const brands = await productService.productBrands();
+    const brands = await ProductService.getProductBrands();
     res.json(brands);
   } catch (error) {
     next(error);
@@ -65,7 +65,7 @@ export const getProductBrands: RequestHandler = async (_, res, next) => {
 
 export const getProductSizes: RequestHandler = async (_, res, next) => {
   try {
-    const sizes = await productService.productSizes();
+    const sizes = await ProductService.getProductSizes();
     res.json(sizes);
   } catch (error) {
     next(error);
@@ -74,7 +74,7 @@ export const getProductSizes: RequestHandler = async (_, res, next) => {
 
 export const getProductColors: RequestHandler = async (_, res, next) => {
   try {
-    const colors = await productService.productColors();
+    const colors = await ProductService.getProductColors();
     res.json(colors);
   } catch (error) {
     next(error);
@@ -83,7 +83,7 @@ export const getProductColors: RequestHandler = async (_, res, next) => {
 
 export const getProductTags: RequestHandler = async (_, res, next) => {
   try {
-    const tags = await productService.productTags();
+    const tags = await ProductService.getProductTags();
     res.json(tags);
   } catch (error) {
     next(error);

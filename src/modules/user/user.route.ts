@@ -1,9 +1,9 @@
 import { ROUTES } from "@/constants";
 import { Router } from "express";
 import {
-  getUserInfo,
+  getUserProfile,
   updateUserAvatar,
-  updateUserInfo,
+  updateUserProfile,
 } from "./user.controller";
 import { authMiddleware } from "@/middleware/auth.middleware";
 import { upload } from "@/utils/multer";
@@ -12,7 +12,7 @@ import { userSchema } from "./user.schema";
 
 const userRouter = Router();
 
-userRouter.get(ROUTES.USER, authMiddleware, getUserInfo);
+userRouter.get(ROUTES.USER, authMiddleware, getUserProfile);
 
 userRouter.patch(
   ROUTES.AVATAR,
@@ -25,7 +25,7 @@ userRouter.patch(
   ROUTES.USER,
   authMiddleware,
   validate({ body: userSchema }),
-  updateUserInfo
+  updateUserProfile
 );
 
 export default userRouter;

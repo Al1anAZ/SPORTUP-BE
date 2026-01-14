@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-export const productBySlugSelect = {
+export const productSelectDBQuery = {
   id: true,
   name: true,
   slug: true,
@@ -41,16 +41,7 @@ export const productBySlugSelect = {
   },
 } satisfies Prisma.ProductSelect;
 
-export const userSelect = {
-  email: true,
-  name: true,
-  avatarKey: true,
-  address: true,
-  phone: true,
-  role: true
-} satisfies Prisma.UserSelect;
-
-export const productWithPaginationAndFilter = {
+export const productReducedSelectDBQuery = {
   id: true,
   name: true,
   slug: true,
@@ -63,6 +54,7 @@ export const productWithPaginationAndFilter = {
   },
   variants: {
     select: {
+      id: true,
       images: {
         select: {
           url: true,
@@ -74,3 +66,13 @@ export const productWithPaginationAndFilter = {
     },
   },
 } satisfies Prisma.ProductSelect;
+
+
+export const userSelectDBQuery = {
+  email: true,
+  name: true,
+  avatarKey: true,
+  address: true,
+  phone: true,
+  role: true
+} satisfies Prisma.UserSelect;

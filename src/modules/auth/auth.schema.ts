@@ -20,5 +20,5 @@ export const registerSchema = loginSchema.extend({
   phone: z.string().regex(/^\+?[0-9]{7,15}$/, "Invalid phone number"),
 });
 
-export type registerInput = z.infer<typeof registerSchema>;
-export type loginInput = z.infer<typeof loginSchema>;
+export type registerDTO = z.infer<typeof registerSchema>;
+export type loginDTO = z.infer<typeof loginSchema>;
