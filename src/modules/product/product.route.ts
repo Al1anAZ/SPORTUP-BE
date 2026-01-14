@@ -9,7 +9,7 @@ import {
   getProductSizes,
   getProductTags,
 } from "./product.controller";
-import { validate } from "@/middleware/validateHandler.middleware";
+import { validateMiddleware } from "@/middleware/validateHandler.middleware";
 import { productFilteringOptionsSchema } from "./product.schema";
 
 
@@ -17,7 +17,7 @@ const productRouter = Router();
 
 productRouter.get(
   ROUTES.PRODUCT,
-  validate({ query: productFilteringOptionsSchema }),
+  validateMiddleware({ query: productFilteringOptionsSchema }),
   getProducts
 );
 productRouter.get(ROUTES.PRODUCT_BY_SLUG, getProductBySlug);

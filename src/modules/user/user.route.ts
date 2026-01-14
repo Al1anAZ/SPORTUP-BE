@@ -7,7 +7,7 @@ import {
 } from "./user.controller";
 import { authMiddleware } from "@/middleware/auth.middleware";
 import { upload } from "@/utils/multer";
-import { validate } from "@/middleware/validateHandler.middleware";
+import { validateMiddleware } from "@/middleware/validateHandler.middleware";
 import { userSchema } from "./user.schema";
 
 const userRouter = Router();
@@ -24,7 +24,7 @@ userRouter.patch(
 userRouter.patch(
   ROUTES.USER,
   authMiddleware,
-  validate({ body: userSchema }),
+  validateMiddleware({ body: userSchema }),
   updateUserProfile
 );
 

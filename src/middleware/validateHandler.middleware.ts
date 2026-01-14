@@ -1,7 +1,7 @@
 import { Schemas, ValidatedRequest } from "@/types/validation.middleware";
 import { RequestHandler } from "express";
 
-export const validate =
+export const validateMiddleware =
   <TBody = any, TQuery = any, TParams = any>(
     schemas: Schemas<TBody, TQuery, TParams>
   ): RequestHandler =>
